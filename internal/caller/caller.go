@@ -79,7 +79,17 @@ func (c Caller) FilePath(basedir ...string) string {
 var replacer = *strings.NewReplacer("(*", "", ")", "", ".go", "")
 
 // New creates a Caller value via the runtime package.
-func New(skip int) (Caller, error) {
+func New(skip int) Caller {
+
+	// Setup invalid data to indicate unsucessful call.
+	unk := "unknown"
+	c := Caller{
+		pkg:  unk,
+		fn:   unk,
+		path: unk,
+		line: -1,
+	}
+
 	if skip < 0 {
 		skip = 0
 	}
@@ -88,7 +98,7 @@ func New(skip int) (Caller, error) {
 
 	pc, path, line, ok := runtime.Caller(skip)
 	if !ok {
-		return Caller{}, fmt.Errorf("invalid runtime caller")
+		return c
 	}
 
 	pcfn := runtime.FuncForPC(pc)
@@ -102,25 +112,21 @@ func New(skip int) (Caller, error) {
 	// Seperate the package from what remains.
 	parts = strings.SplitN(caller, ".", 2)
 
-	var pkg, fn string
-
 	switch len(parts) {
 	case 0:
-		return Caller{}, fmt.Errorf("could not parse runtime caller")
+		return c
 	case 1:
 		// Somehow there wasn't a function and/or method...?
-		pkg = parts[0]
+		c.pkg = parts[0]
 	default:
-		pkg = parts[0]
-		fn = parts[1]
+		c.pkg = parts[0]
+		c.fn = parts[1]
 	}
 
-	c := Caller{
-		pkg:  pkg,
-		fn:   fn,
-		path: path,
-		line: line,
-	}
+	// Add the file path and line number now that we've
+	// successfully made it to this point.
+	c.path = path
+	c.line = line
 
-	return c, nil
+	return c
 }
