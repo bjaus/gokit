@@ -32,7 +32,7 @@ func Respond(w http.ResponseWriter, r *http.Request, err error) {
 		payload := Response{
 			Error: "invalid request payload",
 			Detail: lo.Associate(ve, func(fe validator.FieldError) (string, string) {
-				return fe.Field(), fe.Translate(vdate.Translator)
+				return fe.Field(), fe.Translate(vdate.Translator())
 			}),
 		}
 		web.Respond(w, http.StatusUnprocessableEntity, payload)

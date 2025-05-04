@@ -1,6 +1,7 @@
 package vdate
 
 import (
+	"context"
 	"reflect"
 	"strings"
 
@@ -34,8 +35,14 @@ func init() {
 	lo.Must0(en_translations.RegisterDefaultTranslations(validate, trans))
 }
 
-var (
-	Struct     = validate.Struct
-	StructCtx  = validate.StructCtx
-	Translator = trans
-)
+func Struct(i any) error {
+	return validate.Struct(i)
+}
+
+func StructCtx(ctx context.Context, i any) error {
+	return validate.StructCtx(ctx, i)
+}
+
+func Translator() ut.Translator {
+	return trans
+}
