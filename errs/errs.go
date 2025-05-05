@@ -63,6 +63,7 @@ const (
 	CodeNotFound       Code = "not-found"
 	CodeNotImplemented Code = "not-implemented"
 	CodeUnauthorized   Code = "unauthorized"
+	CodeUnprocessable  Code = "unprocessable"
 )
 
 var defaultMessages = map[Code]string{
@@ -73,6 +74,7 @@ var defaultMessages = map[Code]string{
 	CodeNotFound:       "resource not found",
 	CodeNotImplemented: "not implemented",
 	CodeUnauthorized:   "unauthorized",
+	CodeUnprocessable:  "unprocessable entity",
 }
 
 var httpStatusMap = map[Code]int{
@@ -83,6 +85,7 @@ var httpStatusMap = map[Code]int{
 	CodeNotFound:       http.StatusNotFound,
 	CodeNotImplemented: http.StatusNotImplemented,
 	CodeUnauthorized:   http.StatusUnauthorized,
+	CodeUnprocessable:  http.StatusUnprocessableEntity,
 }
 
 type Error struct {

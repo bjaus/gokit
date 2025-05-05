@@ -3,6 +3,7 @@ package errs
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -30,7 +31,7 @@ func Respond(w http.ResponseWriter, r *http.Request, err error) {
 	var ve validator.ValidationErrors
 	if errors.As(err, &ve) {
 		payload := Response{
-			Error: "invalid request payload",
+			Error: "invalid data provided",
 			Detail: lo.Associate(ve, func(fe validator.FieldError) (string, string) {
 				return fe.Field(), fe.Translate(vdate.Translator())
 			}),
@@ -43,5 +44,8 @@ func Respond(w http.ResponseWriter, r *http.Request, err error) {
 	payload := Response{
 		Error: e.Message(),
 	}
+
+	slog.Error(e.Message(), "error", e.Error())
+
 	web.Respond(w, e.status(), payload)
 }
